@@ -46,14 +46,14 @@ namespace BH3_QRCodeScanner
         }
         public JObject Login_WithCaptcha(string challenge, string userid, string captchaResult)
         {
-            JObject data = JObject.Parse(File.ReadAllText("modolrsa.json"));
+            JObject data = JObject.Parse(File.ReadAllText("modolrsa_B.json"));
 
             string query = Encrypt.Login_SetSign(data);
             var http = Helper.GetCommonHttp();
             string t = http.UploadString(bililogin + "api/client/rsa", query);
             http.Dispose();
             var rsa = JObject.Parse(t);
-            data = JObject.Parse(File.ReadAllText("modollogin.json"));
+            data = JObject.Parse(File.ReadAllText("modollogin_B.json"));
 
             string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
             string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";
@@ -77,14 +77,18 @@ namespace BH3_QRCodeScanner
         }
         public JObject Login_NoCaptcha()
         {
-            JObject data = JObject.Parse(File.ReadAllText("modolrsa.json"));
+            JObject data = JObject.Parse(File.ReadAllText("modolrsa_B.json"));
 
             string query = Encrypt.Login_SetSign(data);
             string t = "";
             using (var http = Helper.GetCommonHttp())
                 t = http.UploadString(bililogin + "api/client/rsa", query);
             var rsa = JObject.Parse(t);
-            data = JObject.Parse(File.ReadAllText("modollogin.json"));
+            if (rsa["code"].ToString() != "0")
+            {
+                throw new Exception($"Login_NoCaptcha Error ,msg = {rsa["message"]}");
+            }
+            data = JObject.Parse(File.ReadAllText("modollogin_B.json"));
 
             string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
             string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";

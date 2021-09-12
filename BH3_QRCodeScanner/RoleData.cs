@@ -9,6 +9,7 @@ namespace BH3_QRCodeScanner
 {
     public class RoleData
     {
+        public const string BH_Ver = "5.1.0";
         public string open_id;
         public string open_token;
         public string combo_id;
@@ -29,20 +30,22 @@ namespace BH3_QRCodeScanner
             this.channel_id = channel_id;
             this.account_type = account_type;
             this.accountType = account_type;
-            this.oa_req_key = oa_req_key;
+            this.oa_req_key = BH_Ver + "_gf_android_" + oa_req_key;
             this.special_tag = special_tag;
+            Console.WriteLine("获取OA服务器");
             this.oaserver = GetOAServer();
+            Console.WriteLine("获取OA服务器成功");
         }
         public JObject GetOAServer()
         {
             JObject data = new JObject();
-            using(var http = Helper.GetCommonHttp())
+            using(var http = Helper.GetCommonHttp(false))
             {
                 string url = $"https://global2.bh3.com/query_dispatch?version={oa_req_key}&t={Helper.TimeStampMs}";
                 data = JObject.Parse(http.UploadString(url, ""));
             }
             JObject dispatch = JObject.Parse((data["region_list"] as JArray)[0].ToString());
-            using (var http = Helper.GetCommonHttp())
+            using (var http = Helper.GetCommonHttp(false))
             {
                 string url = $"{dispatch["dispatch_url"]}?version={oa_req_key}&t={Helper.TimeStampMs}";
                 return JObject.Parse(http.UploadString(url, ""));

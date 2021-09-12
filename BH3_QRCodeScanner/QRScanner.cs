@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +14,7 @@ namespace BH3_QRCodeScanner
     public class QRScanner
     {
         const string Channel_id = "14";
+        const string Device_ID = "2e7793608ac77ee7";
         string UID { get; set; }
         string Access_Key { get; set; }
         string Ticket { get; set; }
@@ -51,20 +53,20 @@ namespace BH3_QRCodeScanner
         {
             string json_data = new JObject
             {
-                {"uid", UID },
+                {"uid", Convert.ToInt32(UID) },
                 {"access_key", Access_Key },
-            }.ToString();
+            }.ToString(Formatting.None);
             JObject json = new JObject
             {
-                {"device", "" },
                 {"app_id", "1" },
                 {"channel_id", channel_id },
                 {"data", json_data },
+                {"device", Device_ID },
             };
             json.Add("sign", Encrypt.Scan_bh3sign(json));
-            using (var http = Helper.GetCommonHttp())
+            using (var http = Helper.GetCommonHttp(false))
             {
-                return JObject.Parse(http.UploadString("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", json.ToString()));
+                return JObject.Parse(http.UploadString("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", json.ToString(Formatting.None)));
             }
         }
         public static string ScanQRCode(string path) => ScanQRCode((Bitmap)Image.FromFile(path));
@@ -96,7 +98,7 @@ namespace BH3_QRCodeScanner
             JObject data_Base = new JObject
             {
                 {"app_id" ,App_id},
-                {"device" ,""},
+                {"device" , Device_ID},
                 {"ticket" ,Ticket},
                 {"ts" , Helper.TimeStampMs},
             };
@@ -104,7 +106,7 @@ namespace BH3_QRCodeScanner
             foreach (var item in data_Base)
                 data.Add(item.Key, item.Value);
             data.Add("sign", Encrypt.Scan_bh3sign(data));
-            using(var http = Helper.GetCommonHttp())
+            using(var http = Helper.GetCommonHttp(false))
             {
                 string url = $"https://api-sdk.mihoyo.com/{Biz_key}/combo/panda/qrcode/scan";
                 data = JObject.Parse(http.UploadString(url, data.ToString()));
@@ -117,14 +119,14 @@ namespace BH3_QRCodeScanner
             else
             {
                 data = GenRequest(data_Base);
-                using(var http = Helper.GetCommonHttp())
+                using(var http = Helper.GetCommonHttp(false))
                 {
                     string url = $"https://api-sdk.mihoyo.com/{Biz_key}/combo/panda/qrcode/confirm";
-                    data = JObject.Parse(http.UploadString(url, data.ToString()));
+                    data = JObject.Parse(http.UploadString(url, data.ToString(Formatting.None)));
                     if (data["retcode"].ToString() != "0")
                     {
-                        Console.WriteLine("扫码错误");
-                        throw new Exception($"扫码错误，返回值不为0, msg = {(data.ContainsKey("message") ? data["message"] : "已过期")}");
+                        Console.WriteLine($"扫码错误，返回值不为0, msg = {(data.ContainsKey("message") ? data["message"] : "已过期")}");
+                        throw new Exception($"{(data.ContainsKey("message") ? data["message"] : "已过期")}");
                     }
                     else
                     {
@@ -142,7 +144,7 @@ namespace BH3_QRCodeScanner
             {
                 {"heartbeat", false },
                 {"open_id", role.open_id },
-                {"device_id", "" },
+                {"device_id", Device_ID },
                 {"app_id", App_id },
                 {"channel_id", role.channel_id },
                 {"combo_token", role.combo_token },
@@ -159,8 +161,8 @@ namespace BH3_QRCodeScanner
             {
                 {"account_url",  role.oaserver["account_url"].ToString()},
                 {"account_url_backup",  role.oaserver["account_url_backup"].ToString()},
-                {"asset_boundle_url",  role.oaserver["asset_boundle_url"].ToString()},
-                {"ex_resource_url",  role.oaserver["ex_resource_url"].ToString()},
+                {"asset_boundle_url",  role.oaserver.ContainsKey("asset_boundle_url")? role.oaserver["asset_boundle_url"].ToString(): (role.oaserver["asset_bundle_url_list"] as JArray)[0].ToString()},
+                {"ex_resource_url",  role.oaserver.ContainsKey("ex_resource_url")? role.oaserver["ex_resource_url"].ToString(): (role.oaserver["ex_resource_url_list"] as JArray)[0].ToString()},
                 {"ext",  role.oaserver["ext"]},
                 {"gameserver",  role.oaserver["gameserver"]},
                 {"gateway",  role.oaserver["gateway"]},
@@ -180,13 +182,13 @@ namespace BH3_QRCodeScanner
             JObject ext_json = new JObject { {"data", data_json } };
             JObject payload_json = new JObject
             {
-                {"raw", raw_json },
+                {"raw", raw_json.ToString(Formatting.None) },
                 {"proto", "Combo" },
-                {"ext", ext_json }
+                {"ext", ext_json.ToString(Formatting.None) }
             };
             JObject confirm_json = new JObject
             {
-                {"device", "" },
+                {"device", Device_ID },
                 {"app_id", App_id },
                 {"ts", Helper.TimeStampMs },
                 {"ticket", Ticket },
