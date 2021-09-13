@@ -163,8 +163,9 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                 var captcha = login.Captcha();
                 if (captcha.ContainsKey("gt") is false)
                 {
+                    NowState = State.Done;
                     MainSave.CQLog.Info("验证码获取失败", captcha.ToString());
-                    SendMsg("验证码获取失败，请联系作者维护，也可以尝试输入 #扫码验证码 来重新获取");
+                    SendMsg("验证码获取失败，请联系作者维护");
                     return "";
                 }
                 MainSave.CQLog.Info("验证码获取成功", "成功");
