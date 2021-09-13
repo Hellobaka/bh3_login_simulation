@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Resources;
 
 namespace BH3_QRCodeScanner
 {
@@ -25,14 +21,26 @@ namespace BH3_QRCodeScanner
         public JObject Login()
         {
             JObject data = Login_NoCaptcha();
-            if(data.ContainsKey("access_key") == false)
+            if (data["code"].ToString() == "500002")
             {
-                Console.WriteLine("Need Captcha");
-                var cap = Captcha();
-                string captchaR = DoCaptcha(cap["gt"].ToString(), cap["challenge"].ToString(), cap["gt_user_id"].ToString());
-                data = Login_WithCaptcha(cap["challenge"].ToString(), cap["gt_user_id"].ToString(), captchaR);
+                return new JObject 
+                {
+                    {"code", "500002" },
+                    {"msg", "账号或密码错误" }
+                };
             }
-            return data;
+            else if (data.ContainsKey("access_key") is false)
+            {
+                return new JObject
+                {
+                    {"code", data["code"] },
+                    {"msg", data["msg"] }
+                };
+            }
+            else
+            {
+                return data;
+            }
         }
         public string DoCaptcha(string gt, string challenge, string userid)
         {
@@ -46,14 +54,14 @@ namespace BH3_QRCodeScanner
         }
         public JObject Login_WithCaptcha(string challenge, string userid, string captchaResult)
         {
-            JObject data = JObject.Parse(File.ReadAllText("modolrsa_B.json"));
+            JObject data = JObject.Parse(Resource_Json.modolrsa_B);
 
             string query = Encrypt.Login_SetSign(data);
             var http = Helper.GetCommonHttp();
             string t = http.UploadString(bililogin + "api/client/rsa", query);
             http.Dispose();
             var rsa = JObject.Parse(t);
-            data = JObject.Parse(File.ReadAllText("modollogin_B.json"));
+            data = JObject.Parse(Resource_Json.modollogin_B);
 
             string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
             string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";
@@ -70,14 +78,14 @@ namespace BH3_QRCodeScanner
         }
         public JObject Captcha()
         {
-            JObject data = JObject.Parse(File.ReadAllText("modolcaptcha.json"));
+            JObject data = JObject.Parse(Resource_Json.modolcaptcha_B);
             string query = Encrypt.Login_SetSign(data);
             using (var http = Helper.GetCommonHttp())
                 return JObject.Parse(http.UploadString(bililogin + "api/client/start_captcha", query));
         }
         public JObject Login_NoCaptcha()
         {
-            JObject data = JObject.Parse(File.ReadAllText("modolrsa_B.json"));
+            JObject data = JObject.Parse(Resource_Json.modolrsa_B);
 
             string query = Encrypt.Login_SetSign(data);
             string t = "";
@@ -88,7 +96,7 @@ namespace BH3_QRCodeScanner
             {
                 throw new Exception($"Login_NoCaptcha Error ,msg = {rsa["message"]}");
             }
-            data = JObject.Parse(File.ReadAllText("modollogin_B.json"));
+            data = JObject.Parse(Resource_Json.modollogin_B);
 
             string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
             string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";

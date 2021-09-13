@@ -1,4 +1,4 @@
-﻿using CustomGacha.SDK.Tool.Http;
+﻿using me.cqp.luohuaming.BH3Scanner.Tool.Http;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BH3_QRCodeScanner
 {

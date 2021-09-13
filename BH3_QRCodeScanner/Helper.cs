@@ -1,4 +1,4 @@
-﻿using CustomGacha.SDK.Tool.Http;
+﻿using me.cqp.luohuaming.BH3Scanner.Tool.Http;
 using System;
 using System.Collections.Generic;
 

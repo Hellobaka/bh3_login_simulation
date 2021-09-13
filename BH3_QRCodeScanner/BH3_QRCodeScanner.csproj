@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9926B1A0-7EDE-4841-939F-E80EB082A4B7}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>BH3_QRCodeScanner</RootNamespace>
     <AssemblyName>BH3_QRCodeScanner</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -30,6 +30,29 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
@@ -61,20 +84,39 @@
     <Compile Include="BSGameSDK.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QRScanner.cs" />
+    <Compile Include="Resource_Json.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource_Json.resx</DependentUpon>
+    </Compile>
     <Compile Include="RoleData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resource_Json.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource_Json.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\酷Q机器人插件开发\自定义抽卡\Native.Framework-Final\Native.Tool\Native.Tool.csproj">
-      <Project>{0ca93eb9-4e25-46c6-94d2-0f97137a1606}</Project>
-      <Name>Native.Tool</Name>
+    <ProjectReference Include="..\BH3Scanner.PublicInfos\BH3Scanner.PublicInfos.csproj">
+      <Project>{9ca41650-71f2-4f0c-9a80-9cdb5a7d593c}</Project>
+      <Name>BH3Scanner.PublicInfos</Name>
     </ProjectReference>
+    <ProjectReference Include="..\me.cqp.luohuaming.BH3Scanner.Sdk\me.cqp.luohuaming.BH3Scanner.Sdk.csproj">
+      <Project>{D7A958B3-79D9-49F8-8BB4-9619BAB6ECBA}</Project>
+      <Name>me.cqp.luohuaming.BH3Scanner.Sdk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\me.cqp.luohuaming.BH3Scanner.Tool\me.cqp.luohuaming.BH3Scanner.Tool.csproj">
+      <Project>{0ca93eb9-4e25-46c6-94d2-0f97137a1606}</Project>
+      <Name>me.cqp.luohuaming.BH3Scanner.Tool</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

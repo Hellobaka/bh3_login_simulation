@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BH3Scanner.PublicInfos;
 
 namespace BH3_QRCodeScanner
 {
@@ -32,9 +28,9 @@ namespace BH3_QRCodeScanner
             this.accountType = account_type;
             this.oa_req_key = BH_Ver + "_gf_android_" + oa_req_key;
             this.special_tag = special_tag;
-            Console.WriteLine("获取OA服务器");
+            MainSave.CQLog.Info("OA服务器获取", "获取OA服务器...");
             this.oaserver = GetOAServer();
-            Console.WriteLine("获取OA服务器成功");
+            MainSave.CQLog.Info("OA服务器获取", "获取OA服务器成功");
         }
         public JObject GetOAServer()
         {
