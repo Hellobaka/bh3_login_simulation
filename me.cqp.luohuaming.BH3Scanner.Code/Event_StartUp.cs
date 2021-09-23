@@ -32,14 +32,18 @@ namespace me.cqp.luohuaming.BH3Scanner.Code
                     }
                 }
             }
-            foreach(var item in Directory.GetFiles(Path.Combine(MainSave.ImageDirectory, "tmp")))
+            string path = Path.Combine(MainSave.ImageDirectory, "tmp");
+            if (Directory.Exists(path))
             {
-                try
+                foreach (var item in Directory.GetFiles(path))
                 {
-                    File.Delete(item);
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch { }
                 }
-                catch { }
-            }    
+            }
         }
     }
 }
