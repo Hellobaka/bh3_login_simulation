@@ -5,12 +5,18 @@ using System.Threading;
 using BH3_QRCodeScanner;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 
 namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
 {
     public class SetAccount : IOrderModel
     {
-        static Dictionary<long, StateMachine> StateMachines = new Dictionary<long, StateMachine>();
+        class User
+        {
+            public long Group;
+            public long QQ;
+        }
+        static Dictionary<User, StateMachine> StateMachines = new Dictionary<User, StateMachine>();
         public bool ImplementFlag { get; set; } = true;
         public string GetOrderStr() => "";
         public int Protity { get; set; } = 100;
@@ -28,26 +34,31 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             {
                 SendID = e.FromGroup,
             };
+            User user;
             if (e.Message.Text.Trim() == OrderText.SetAccount)
             {
                 result.Result = true;
                 result.SendFlag = true;
-                if (!StateMachines.ContainsKey(e.FromQQ))
+                if (!StateMachines.Any(x => x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ))
                 {
-                    StateMachines.Add(e.FromQQ, new StateMachine(e.FromQQ, e.FromGroup));
-                    sendText.MsgToSend.Add(StateMachines[e.FromQQ].GetReply(e.Message.Text));
+                    user = new User { Group = e.FromGroup, QQ = e.FromQQ };
+                    StateMachines.Add(user, new StateMachine(e.FromQQ, e.FromGroup));
+                    sendText.MsgToSend.Add(StateMachines[user].GetReply(e.Message.Text));
                 }
                 else
                 {
                     sendText.MsgToSend.Add($"请参照聊天记录完成当前进度，如需重置，请输入 #扫码重置");
                 }
             }
-            else if (StateMachines.ContainsKey(e.FromQQ))
+            else if (StateMachines.Any(x => x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ))
             {
-                string reply = StateMachines[e.FromQQ].GetReply(e.Message.Text);
-                if (reply == "Done" || reply == "Deny" || (StateMachines[e.FromQQ].NowState == StateMachine.State.Done || StateMachines[e.FromQQ].NowState == StateMachine.State.Deny))
+                user = StateMachines.First(x=> x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ).Key;
+                string reply = StateMachines[user].GetReply(e.Message.Text);
+                if (reply == "Done" || reply == "Deny" 
+                    || (StateMachines[user].NowState == StateMachine.State.Done 
+                    || StateMachines[user].NowState == StateMachine.State.Deny))
                 {
-                    StateMachines.Remove(e.FromQQ);
+                    StateMachines.Remove(user);
                 }
                 if (string.IsNullOrWhiteSpace(reply) is false)
                 {
@@ -71,26 +82,31 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             {
                 SendID = e.FromQQ,
             };
+            User user;
             if (e.Message.Text.Trim() == OrderText.SetAccount)
             {
                 result.Result = true;
                 result.SendFlag = true;
-                if (!StateMachines.ContainsKey(e.FromQQ))
+                if (!StateMachines.Any(x => x.Key.Group == -1 && x.Key.QQ == e.FromQQ))
                 {
-                    StateMachines.Add(e.FromQQ, new StateMachine(e.FromQQ, -1));
-                    sendText.MsgToSend.Add(StateMachines[e.FromQQ].GetReply(e.Message.Text));
+                    user = new User { QQ=e.FromQQ, Group = -1 };
+                    StateMachines.Add(user, new StateMachine(e.FromQQ, -1));
+                    sendText.MsgToSend.Add(StateMachines[user].GetReply(e.Message.Text));
                 }
                 else
                 {
                     sendText.MsgToSend.Add($"请参照聊天记录完成当前进度，如需重置，请输入 #扫码重置");
                 }
             }
-            else if (StateMachines.ContainsKey(e.FromQQ))
+            else if (StateMachines.Any(x => x.Key.Group == -1 && x.Key.QQ == e.FromQQ))
             {
-                string reply = StateMachines[e.FromQQ].GetReply(e.Message.Text);
-                if (reply == "Done" || reply == "Deny")
+                user = StateMachines.First(x => x.Key.Group == -1 && x.Key.QQ == e.FromQQ).Key;
+                string reply = StateMachines[user].GetReply(e.Message.Text);
+                if (reply == "Done" || reply == "Deny"
+                    || (StateMachines[user].NowState == StateMachine.State.Done
+                    || StateMachines[user].NowState == StateMachine.State.Deny))
                 {
-                    StateMachines.Remove(e.FromQQ);
+                    StateMachines.Remove(user);
                     reply = string.Empty;
                 }
                 if (string.IsNullOrWhiteSpace(reply) is false)
