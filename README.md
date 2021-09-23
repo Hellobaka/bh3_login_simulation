@@ -44,3 +44,5 @@ Version=5.2.0
 Version=5.2.0
 Help=#扫码机帮助
 ```
+## 效果展示
+![image](https://user-images.githubusercontent.com/50934714/134467814-62e4a775-4833-4bfc-96e5-aeecf8ef6d4e.png)
