@@ -17,6 +17,13 @@ namespace BH3Scanner.PublicInfos
         public static string ImageDirectory { get; set; }
 
         static IniConfig configMain;
+        public static string BH3Ver {
+            get
+            {
+                return ConfigMain.Object["Config"]["Version"]?.ToString();
+            }
+            set { ConfigMain.Object["Config"]["Version"] = value; ConfigMain.Save(); }
+        }
         public static bool IniChangeFlag = false;
         public static IniConfig ConfigMain
         {
