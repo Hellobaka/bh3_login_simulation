@@ -6,6 +6,7 @@ namespace BH3Scanner.PublicInfos
 {
     public interface IOrderModel
     {
+        int Protity { get; set; }
         bool ImplementFlag { get; set; }
         string GetOrderStr();
         bool Judge(string destStr);

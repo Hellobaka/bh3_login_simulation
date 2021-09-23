@@ -11,7 +11,8 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
     public class ExampleFunction : IOrderModel
     {
         public bool ImplementFlag { get; set; } = false;
-        
+        public int Protity { get; set; } = 100;
+
         public string GetOrderStr() => "这里输入触发指令";
 
         public bool Judge(string destStr) => destStr.StartsWith(GetOrderStr());//这里判断是否能触发指令

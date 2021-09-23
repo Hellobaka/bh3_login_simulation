@@ -8,7 +8,8 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
     public class Help : IOrderModel
     {
         public bool ImplementFlag { get; set; } = true;
-        
+        public int Protity { get; set; } = 100;
+
         public string GetOrderStr() => OrderText.Help;
 
         public bool Judge(string destStr) => destStr.Equals(GetOrderStr());//这里判断是否能触发指令

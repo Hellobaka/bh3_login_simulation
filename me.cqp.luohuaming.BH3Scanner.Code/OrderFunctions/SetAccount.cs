@@ -12,10 +12,10 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
     {
         static Dictionary<long, StateMachine> StateMachines = new Dictionary<long, StateMachine>();
         public bool ImplementFlag { get; set; } = true;
-
         public string GetOrderStr() => "";
+        public int Protity { get; set; } = 100;
 
-        public bool Judge(string destStr) => true;
+        public bool Judge(string destStr) => destStr!=OrderText.QRCodeScan&&!destStr.Contains("[CQ:image");
 
         public FunctionResult Progress(CQGroupMessageEventArgs e)
         {
@@ -45,7 +45,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             else if (StateMachines.ContainsKey(e.FromQQ))
             {
                 string reply = StateMachines[e.FromQQ].GetReply(e.Message.Text);
-                if (reply == "Done" || reply == "Deny")
+                if (reply == "Done" || reply == "Deny" || (StateMachines[e.FromQQ].NowState == StateMachine.State.Done || StateMachines[e.FromQQ].NowState == StateMachine.State.Deny))
                 {
                     StateMachines.Remove(e.FromQQ);
                 }

@@ -11,7 +11,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
     public class RemoveAccount : IOrderModel
     {
         public bool ImplementFlag { get; set; } = true;
-        
+        public int Protity { get; set; } = 100;
         public string GetOrderStr() => OrderText.RemoveAccount;
 
         public bool Judge(string destStr) => destStr.Trim().StartsWith(GetOrderStr());//这里判断是否能触发指令
