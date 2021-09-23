@@ -2,7 +2,7 @@
 	"ret": 1,
 	"apiver": 9,
 	"name": "水银扫码机",
-	"version": "1.0.0",
+	"version": "1.0.5",
 	"version_id": 1,
 	"author": "落花茗",
 	"description": "用于对B服的崩坏三进行快捷登录",
