@@ -18,7 +18,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code
             };
             try
             {
-                foreach (var item in MainSave.Instances.Where(item => item.Judge(e.Message.Text)))
+                foreach (var item in MainSave.Instances.OrderByDescending(x => x.Protity).Where(item => item.Judge(e.Message.Text)))
                 {
                     return item.Progress(e);
                 }
