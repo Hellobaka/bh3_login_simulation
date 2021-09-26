@@ -214,7 +214,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             }
             catch (Exception e)
             {
-
+                MainSave.CQLog.Info("Error", $"{e.Message}\n{e.StackTrace}");
                 return $"扫码登录失败，{e.Message}请稍等后重试，若依旧如此请联系作者获取帮助";
             }
         }
