@@ -123,23 +123,17 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                     if (c.Any(x => x.IsImageCQCode))
                     {
                         var img = c.First(x => x.IsImageCQCode);
-                        using (var http = new Tool.Http.HttpWebClient())
+                        string retMsg = "";
+                        if (WaitLogin[user].QRCodeScan(MainSave.CQApi.ReceiveImage(img)))
                         {
-                            Directory.CreateDirectory(Path.Combine(MainSave.ImageDirectory, "tmp"));
-                            string filename = Path.Combine(MainSave.ImageDirectory, "tmp", Guid.NewGuid().ToString() + ".jpg");
-                            http.DownloadFile(CommonHelper.GetImageURL(img.ToString()), filename);
-                            string retMsg = "";
-                            if (WaitLogin[user].QRCodeScan(filename))
-                            {
-                                retMsg = "扫码完成";
-                            }
-                            else
-                            {
-                                retMsg = "扫码登录失败，请查看日志排查问题";
-                            }
-                            WaitLogin.Remove(user);
-                            return retMsg;
+                            retMsg = "扫码完成";
                         }
+                        else
+                        {
+                            retMsg = "扫码登录失败，请查看日志排查问题";
+                        }
+                        WaitLogin.Remove(user);
+                        return retMsg;
                     }
                     else
                     {
