@@ -21,7 +21,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
         public string GetOrderStr() => "";
         public int Protity { get; set; } = 100;
 
-        public bool Judge(string destStr) => destStr!=OrderText.QRCodeScan&&!destStr.Contains("[CQ:image");
+        public bool Judge(string destStr) => !destStr.StartsWith(OrderText.QRCodeScan)&&!destStr.Contains("[CQ:image");
 
         public FunctionResult Progress(CQGroupMessageEventArgs e)
         {
