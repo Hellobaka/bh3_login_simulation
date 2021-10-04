@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
-using System.Resources;
 
 namespace BH3_QRCodeScanner
 {
     //https://github.com/cc004/pcrjjc2/blob/main/bsgamesdk.py
+    /// <summary>
+    /// Bilibili游戏登录SDK
+    /// </summary>
     public class BSGameSDK
     {
         string Account { get; set; }
@@ -18,9 +20,13 @@ namespace BH3_QRCodeScanner
             Account = account;
             Password = password;
         }
+        /// <summary>
+        /// 登录Bilibili账号
+        /// </summary>
+        /// <returns>结果Json</returns>
         public JObject Login()
         {
-            JObject data = Login_NoCaptcha();
+            JObject data = Login_NoCaptcha();//尝试无验证码登录
             if (data["code"].ToString() == "500002")
             {
                 return new JObject 
@@ -42,6 +48,7 @@ namespace BH3_QRCodeScanner
                 return data;
             }
         }
+        [Obsolete("此函数只在测试时使用, 用于在控制台进行二维码验证")]
         public string DoCaptcha(string gt, string challenge, string userid)
         {
             lock (Captcha_Lock)
@@ -52,6 +59,9 @@ namespace BH3_QRCodeScanner
                 return Console.ReadLine();
             }
         }
+        /// <summary>
+        /// 进行带验证码的登录
+        /// </summary>
         public JObject Login_WithCaptcha(string challenge, string userid, string captchaResult)
         {
             JObject data = JObject.Parse(Resource_Json.modolrsa_B);
@@ -76,6 +86,9 @@ namespace BH3_QRCodeScanner
             http = Helper.GetCommonHttp();
             return JObject.Parse(http.UploadString(bililogin + "api/client/login", query));
         }
+        /// <summary>
+        /// 获取验证码信息
+        /// </summary>
         public JObject Captcha()
         {
             JObject data = JObject.Parse(Resource_Json.modolcaptcha_B);
@@ -83,6 +96,11 @@ namespace BH3_QRCodeScanner
             using (var http = Helper.GetCommonHttp())
                 return JObject.Parse(http.UploadString(bililogin + "api/client/start_captcha", query));
         }
+        /// <summary>
+        /// 尝试无验证码登录
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public JObject Login_NoCaptcha()
         {
             JObject data = JObject.Parse(Resource_Json.modolrsa_B);

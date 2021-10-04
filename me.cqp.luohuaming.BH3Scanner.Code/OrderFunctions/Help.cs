@@ -55,7 +55,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             sb.AppendLine($"{OrderText.SetAccount}: 进行哔哩哔哩账号与QQ的绑定");
             sb.AppendLine($"{OrderText.RemoveAccount} 已绑定账号: 取消哔哩哔哩账号与QQ的绑定");
             sb.AppendLine($"{OrderText.QRCodeScan} [可选参数: 绑定序号/账号]: 进行扫码过程, 单一绑定无需附加参数, 若有多个账号, 可在指令后指定序号或者账号");
-            sb.AppendLine($"{OrderText.CaptchaVerify} 验证码结果: 登录过程中需要验证码, 按提示获得到的验证码结果");
+            sb.AppendLine($"{OrderText.CaptchaVerify}: 登录过程中需要验证码但未获取成功或验证失败, 输入此指令重新获取");
             return sb.ToString();
         }
     }

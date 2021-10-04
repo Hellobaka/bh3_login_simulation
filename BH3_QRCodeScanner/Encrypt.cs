@@ -19,6 +19,11 @@ namespace BH3_QRCodeScanner
         const string SALT = "dbf8f1b4496f430b8a3c0f436a35b931";
         public const string BH_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDvekdPMHN3AYhm/vktJT+YJr7cI5DcsNKqdsx5DZX0gDuWFuIjzdwButrIYPNmRJ1G8ybDIF7oDW2eEpm5sMbL9zs\n9ExXCdvqrn51qELbqj0XxtMTIpaCHFSI50PfPpTFV9Xt/hmyVwokoOXFlAEgCn+Q\nCgGs52bFoYMtyi+xEQIDAQAB\n";
         public const string BH_APP_KEY = "0ebc517adb1b62c6b408df153331f9aa";
+        /// <summary>
+        /// bilibili登录sign获取算法
+        /// </summary>
+        /// <param name="data">待处理json</param>
+        /// <returns></returns>
         public static string Login_SetSign(JObject data)
         {
             data["timestamp"] = Helper.TimeStamp.ToString();
@@ -45,7 +50,11 @@ namespace BH3_QRCodeScanner
             query += "sign=" + sign;
             return query;
         }
-
+        /// <summary>
+        /// 崩坏三登录sign加密算法
+        /// </summary>
+        /// <param name="data">待处理json</param>
+        /// <returns>sign字符串</returns>
         public static string Scan_bh3sign(JObject data)
         {
             List<KeyValuePair<string, JToken>> ordered = new List<KeyValuePair<string, JToken>>();

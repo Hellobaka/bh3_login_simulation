@@ -8,6 +8,9 @@ using ZXing;
 
 namespace BH3_QRCodeScanner
 {
+    /// <summary>
+    /// 描述扫码登录的类
+    /// </summary>
     public class QRScanner
     {
         const string Channel_id = "14";
@@ -23,6 +26,9 @@ namespace BH3_QRCodeScanner
             UID = uID;
             Access_Key = access_Key;
         }
+        /// <summary>
+        /// 渠道登录, 获取崩坏三账号信息
+        /// </summary>
         public void Bili_Login()
         {
             JObject c = AccountVerify(Channel_id);
@@ -46,6 +52,9 @@ namespace BH3_QRCodeScanner
                     Helper.Success_Role.Add(UID, new RoleData(open_id, "", combo_id, combo_token, Channel_id, "2", "bilibili", 0));
             }
         }
+        /// <summary>
+        /// 使用bilibili登录后获取到的Access_Key进行崩坏三登录
+        /// </summary>
         public JObject AccountVerify(string channel_id)
         {
             string json_data = new JObject
@@ -66,13 +75,25 @@ namespace BH3_QRCodeScanner
                 return JObject.Parse(http.UploadString("https://api-sdk.mihoyo.com/bh3_cn/combo/granter/login/v2/login", json.ToString(Formatting.None)));
             }
         }
+        /// <summary>
+        /// 获取二维码内容
+        /// </summary>
+        /// <param name="path">图片路径</param>
         public static string ScanQRCode(string path) => ScanQRCode((Bitmap)Image.FromFile(path));
+        /// <summary>
+        /// 获取二维码内容
+        /// </summary>
+        /// <param name="qr">图片对象</param>
         public static string ScanQRCode(Bitmap qr)
         {
             IBarcodeReader reader = new BarcodeReader();
             var result = reader.Decode(qr);
             return result != null ? result.Text : string.Empty;
         }
+        /// <summary>
+        /// 拆解二维码登录网址参数列表
+        /// </summary>
+        /// <param name="url">登录网址</param>
         public bool ParseURL(string url)
         {
             var query = Helper.GetURLQuery(url);
@@ -88,6 +109,10 @@ namespace BH3_QRCodeScanner
                 return false;
             }
         }
+        /// <summary>
+        /// 参数完整后, 进行最终二维码登录
+        /// </summary>
+        /// <returns></returns>
         public JObject DoQRLogin()
         {
             if (string.IsNullOrWhiteSpace(Ticket) || string.IsNullOrWhiteSpace(App_id) || string.IsNullOrWhiteSpace(Biz_key))
@@ -128,7 +153,9 @@ namespace BH3_QRCodeScanner
                 }
             }
         }
-
+        /// <summary>
+        /// 最终上报时的请求体, 昵称可自定义显示
+        /// </summary>
         private JObject GenRequest(JObject qr_check)
         {
             RoleData role = Helper.Success_Role[UID];

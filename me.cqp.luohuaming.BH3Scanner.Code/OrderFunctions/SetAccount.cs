@@ -4,7 +4,6 @@ using BH3Scanner.PublicInfos;
 using System.Threading;
 using BH3_QRCodeScanner;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Linq;
 
 namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
@@ -16,6 +15,9 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             public long Group;
             public long QQ;
         }
+        /// <summary>
+        /// 保存用户登记状态机的字典
+        /// </summary>
         static Dictionary<User, StateMachine> StateMachines = new Dictionary<User, StateMachine>();
         public bool ImplementFlag { get; set; } = true;
         public string GetOrderStr() => "";
@@ -35,17 +37,17 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                 SendID = e.FromGroup,
             };
             User user;
-            if (e.Message.Text.Trim() == OrderText.SetAccount)
+            if (e.Message.Text.Trim() == OrderText.SetAccount)//匹配指令
             {
                 result.Result = true;
                 result.SendFlag = true;
-                if (!StateMachines.Any(x => x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ))
+                if (!StateMachines.Any(x => x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ))//状态机数组内不包含此用户
                 {
                     user = new User { Group = e.FromGroup, QQ = e.FromQQ };
                     StateMachines.Add(user, new StateMachine(e.FromQQ, e.FromGroup));
                     sendText.MsgToSend.Add(StateMachines[user].GetReply(e.Message.Text));
                 }
-                else
+                else//流程未完成但依旧输入登记指令
                 {
                     sendText.MsgToSend.Add($"请参照聊天记录完成当前进度，如需重置，请输入 #扫码重置");
                 }
@@ -53,10 +55,10 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             else if (StateMachines.Any(x => x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ))
             {
                 user = StateMachines.First(x=> x.Key.Group == e.FromGroup && x.Key.QQ == e.FromQQ).Key;
-                string reply = StateMachines[user].GetReply(e.Message.Text);
+                string reply = StateMachines[user].GetReply(e.Message.Text);//获取状态机处理结果
                 if (reply == "Done" || reply == "Deny" 
                     || (StateMachines[user].NowState == StateMachine.State.Done 
-                    || StateMachines[user].NowState == StateMachine.State.Deny))
+                    || StateMachines[user].NowState == StateMachine.State.Deny))//若最终结果文本或状态为这俩表示已完成登记, 移除用户
                 {
                     StateMachines.Remove(user);
                 }
@@ -120,6 +122,9 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             return result;
         }
     }
+    /// <summary>
+    /// 状态机, 描述用户登记进度的类
+    /// </summary>
     public class StateMachine
     {
         public long QQ;
@@ -139,16 +144,19 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
         private BSGameSDK login;
         public State NowState = State.Non;
         public static string Deny_Text = "感谢你的使用";
+        /// <summary>
+        /// 进度状态
+        /// </summary>
         public enum State
         {
-            Non,
-            Account,
-            Password,
-            Verify,
-            Captcha,
-            Captcha_Error,
-            Done,
-            Deny
+            Non,//起始状态
+            Account,//输入账号
+            Password,//输入密码
+            Verify,//验证账号能否登录
+            Captcha,//需要验证码
+            Captcha_Error,//验证码错误
+            Done,//流程完成
+            Deny//拒绝协议
         }
         public void SendMsg(string msg)
         {
@@ -161,9 +169,13 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                 MainSave.CQApi.SendGroupMessage(Group, msg);
             }
         }
+        /// <summary>
+        /// 获取状态机回复
+        /// </summary>
+        /// <param name="order">指令文本</param>
         public string GetReply(string order)
         {
-            if (order.Trim() == "#拒绝")
+            if (order.Trim() == "#拒绝")//拒绝了协议
             {
                 NowState = State.Deny;
                 SendMsg(Deny_Text);
@@ -196,7 +208,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                     NowState = State.Account;
                     return $"感谢你使用水银扫码机，本插件仅记录账号与密码供扫码使用，请在信任Bot所属者之后提供账号信息，造成个人财产损失插件作者恕不负责。\n若认可上述内容，请输入你的Bilibili账号的手机或邮箱或用户名，反之请输入 #拒绝 来取消这一进程。";
                 case State.Account:
-                    if (order.Split(' ').Length == 2)
+                    if (order.Split(' ').Length == 2)//若提供了账号与密码则一步到位
                     {
                         var s = order.Split(' ');
                         NowState = State.Verify;
