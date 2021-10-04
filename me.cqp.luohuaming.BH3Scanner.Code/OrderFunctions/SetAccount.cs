@@ -185,7 +185,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             {
                 NowState = State.Non;
             }
-            else if (order.Trim() == "#扫码验证码" && NowState == State.Captcha_Error)
+            else if (order.Trim() == OrderText.CaptchaVerify && NowState == State.Captcha_Error)
             {
                 NowState = State.Captcha;
                 var captcha = login.Captcha();
