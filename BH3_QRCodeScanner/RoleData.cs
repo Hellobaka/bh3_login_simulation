@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using BH3Scanner.PublicInfos;
 
 namespace BH3_QRCodeScanner
 {
@@ -18,11 +17,11 @@ namespace BH3_QRCodeScanner
 
         public RoleData(string open_id, string open_token, string combo_id, string combo_token, string channel_id, string account_type, string oa_req_key, int special_tag)
         {
-            string ver = MainSave.BH3Ver;
-            MainSave.CQLog.Info("扫码登录", $"当前配置中崩坏3版本: {ver}");
+            string ver = Helper.BH3Ver;
+            Helper.Log("扫码登录", $"当前配置中崩坏3版本: {ver}");
             if (string.IsNullOrWhiteSpace(ver))
             {
-                MainSave.CQLog.Error("无效版本", $"版本号无效，请按照文档填写版本号");
+                Helper.Log("无效版本", $"版本号无效，请按照文档填写版本号");
                 throw new System.Exception();
             }
             this.open_id = open_id;
@@ -34,9 +33,9 @@ namespace BH3_QRCodeScanner
             this.accountType = account_type;
             this.oa_req_key = ver + "_gf_android_" + oa_req_key;
             this.special_tag = special_tag;
-            MainSave.CQLog.Info("OA服务器获取", "获取OA服务器...");
+            Helper.Log("OA服务器获取", "获取OA服务器...");
             this.oaserver = GetOAServer();
-            MainSave.CQLog.Info("OA服务器获取", "获取OA服务器成功");
+            Helper.Log("OA服务器获取", "获取OA服务器成功");
         }
         public JObject GetOAServer()
         {
