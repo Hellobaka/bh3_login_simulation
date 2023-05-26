@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "me.cqp.luohuaming.BH3Scanne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BH3Scanner.PublicInfos", "BH3Scanner.PublicInfos\BH3Scanner.PublicInfos.csproj", "{9CA41650-71F2-4F0C-9A80-9CDB5A7D593C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BH3_QRCodeScanner", "BH3_QRCodeScanner\BH3_QRCodeScanner.csproj", "{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BH3_QRCodeScanner", "BH3_QRCodeScanner\BH3_QRCodeScanner.csproj", "{9926B1A0-7EDE-4841-939F-E80EB082A4B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,14 +60,14 @@ Global
 		{9CA41650-71F2-4F0C-9A80-9CDB5A7D593C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9CA41650-71F2-4F0C-9A80-9CDB5A7D593C}.Release|x86.ActiveCfg = Release|Any CPU
 		{9CA41650-71F2-4F0C-9A80-9CDB5A7D593C}.Release|x86.Build.0 = Release|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Debug|x86.Build.0 = Debug|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Release|x86.ActiveCfg = Release|Any CPU
-		{1DD2BCE3-EF70-40E1-B5DD-6B02D6279D4E}.Release|x86.Build.0 = Release|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Debug|Any CPU.Build.0 = Debug|x86
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Debug|x86.Build.0 = Debug|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Release|x86.ActiveCfg = Release|Any CPU
+		{9926B1A0-7EDE-4841-939F-E80EB082A4B7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

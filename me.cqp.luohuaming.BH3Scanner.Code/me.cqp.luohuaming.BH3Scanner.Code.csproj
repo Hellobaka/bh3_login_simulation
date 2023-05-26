@@ -9,10 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>me.cqp.luohuaming.BH3Scanner.Code</RootNamespace>
     <AssemblyName>me.cqp.luohuaming.BH3Scanner.Code</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,9 +55,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BH3_QRCodeScanner\BH3_QRCodeScanner.csproj">
-      <Project>{1dd2bce3-ef70-40e1-b5dd-6b02d6279d4e}</Project>
+      <Project>{9926B1A0-7EDE-4841-939F-E80EB082A4B7}</Project>
       <Name>BH3_QRCodeScanner</Name>
     </ProjectReference>
     <ProjectReference Include="..\me.cqp.luohuaming.BH3Scanner.Sdk\me.cqp.luohuaming.BH3Scanner.Sdk.csproj">

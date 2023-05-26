@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BH3Scanner.PublicInfos;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -33,15 +34,15 @@ namespace BH3_QRCodeScanner
             JObject c = AccountVerify(Channel_id);
             if (c == null)
             {
-                Helper.Log("账号验证", "AccountVerify return null");
+                MainSave.CQLog.Info("账号验证", "AccountVerify return null");
             }
             else if (c["retcode"].ToString() != "0")
             {
-                Helper.Log("账号验证", $"AccountVerify return invalid, msg: {c["message"]}");
+                MainSave.CQLog.Info("账号验证", $"AccountVerify return invalid, msg: {c["message"]}");
             }
             else
             {
-                Helper.Log("账号验证", "账号验证成功");
+                MainSave.CQLog.Info("账号验证", "账号验证成功");
                 string combo_id = c["data"]["combo_id"].ToString();
                 string open_id = c["data"]["open_id"].ToString();
                 string combo_token = c["data"]["combo_token"].ToString();
@@ -85,7 +86,7 @@ namespace BH3_QRCodeScanner
         /// <param name="qr">图片对象</param>
         public static string ScanQRCode(Bitmap qr)
         {
-            ZXing.Windows.Compatibility.BarcodeReader reader = new ZXing.Windows.Compatibility.BarcodeReader();
+            IBarcodeReader reader = new BarcodeReader();
             var result = reader.Decode(qr);
             return result != null ? result.Text : string.Empty;
         }
@@ -134,7 +135,7 @@ namespace BH3_QRCodeScanner
             }
             if(data["retcode"].ToString() != "0")
             {
-                Helper.Log("扫码登录", $"扫码有误，msg = {(data.ContainsKey("message")? data["message"]: "已过期")}");
+                MainSave.CQLog.Info("扫码登录", $"扫码有误，msg = {(data.ContainsKey("message")? data["message"]: "已过期")}");
                 return data;
             }
             else
@@ -145,7 +146,7 @@ namespace BH3_QRCodeScanner
                     string url = $"https://api-sdk.mihoyo.com/{Biz_key}/combo/panda/qrcode/confirm";
                     data = JObject.Parse(http.UploadString(url, data.ToString(Formatting.None)));
                     if (data["retcode"].ToString() != "0")
-                        Helper.Log("扫码登录", $"扫码错误，返回值不为0, msg = {(data.ContainsKey("message") ? data["message"] : "已过期")}");
+                        MainSave.CQLog.Info("扫码登录", $"扫码错误，返回值不为0, msg = {(data.ContainsKey("message") ? data["message"] : "已过期")}");
                     else
                         http.UploadString("https://service-beurmroh-1256541670.sh.apigw.tencentcs.com/succeed", "");
                     return data;

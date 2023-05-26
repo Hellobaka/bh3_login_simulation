@@ -17,8 +17,6 @@ namespace me.cqp.luohuaming.BH3Scanner.Code
             MainSave.ImageDirectory = CommonHelper.GetAppImageDirectory();
 
             AccountSave.LoadAccount();
-            BH3_QRCodeScanner.Helper.BH3Ver = MainSave.BH3Ver;
-            BH3_QRCodeScanner.Helper.LogMethod = (a, b) => e.CQLog.Info(a, b);
             foreach (var item in Assembly.GetAssembly(typeof(Event_GroupMessage)).GetTypes())
             {
                 if (item.IsInterface)

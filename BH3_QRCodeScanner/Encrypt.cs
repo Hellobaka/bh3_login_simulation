@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using me.cqp.luohuaming.BH3Scanner.Tool.Http;
+using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -36,7 +36,7 @@ namespace BH3_QRCodeScanner
                 ordered.Add(item);
                 if (item.Key == "pwd")
                 {
-                    query += $"{item.Key}={WebUtility.UrlEncode(item.Value.ToString())}&";
+                    query += $"{item.Key}={HttpTool.UrlEncode(item.Value.ToString())}&";
                     // continue;
                 }
                 query += $"{item.Key}={item.Value}&";
