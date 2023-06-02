@@ -175,27 +175,12 @@ namespace BH3_QRCodeScanner
                 raw_json.Add("open_token", role.open_token);
                 raw_json.Add("guest", false);
             }
-            JObject dispatch_json = new JObject()
-            {
-                {"account_url",  role.oaserver["account_url"].ToString()},
-                {"account_url_backup",  role.oaserver["account_url_backup"].ToString()},
-                {"asset_boundle_url",  role.oaserver.ContainsKey("asset_boundle_url")? role.oaserver["asset_boundle_url"].ToString(): (role.oaserver["asset_bundle_url_list"] as JArray)[0].ToString()},
-                {"ex_resource_url",  role.oaserver.ContainsKey("ex_resource_url")? role.oaserver["ex_resource_url"].ToString(): (role.oaserver["ex_resource_url_list"] as JArray)[0].ToString()},
-                {"ext",  role.oaserver["ext"]},
-                {"gameserver",  role.oaserver["gameserver"]},
-                {"gateway",  role.oaserver["gateway"]},
-                {"oaserver_url",  role.oaserver["oaserver_url"].ToString()},
-                {"region_name",  role.oaserver["region_name"].ToString()},
-                {"retcode",  "0"},
-                {"is_data_ready",  true},
-                {"server_ext",  role.oaserver["server_ext"]},
-            };
             JObject data_json = new JObject()
             {
                 {"accountType", role.accountType },
                 {"accountID", role.open_id },
                 {"accountToken", role.combo_token },
-                {"dispatch", dispatch_json },
+                {"dispatch", role.oaserver },
             };
             JObject ext_json = new JObject { {"data", data_json } };
             JObject payload_json = new JObject
