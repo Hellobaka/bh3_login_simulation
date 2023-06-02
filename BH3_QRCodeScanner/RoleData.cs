@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using BH3Scanner.PublicInfos;
+﻿using BH3Scanner.PublicInfos;
+using Newtonsoft.Json.Linq;
 
 namespace BH3_QRCodeScanner
 {
@@ -10,7 +10,7 @@ namespace BH3_QRCodeScanner
         public string combo_id;
         public string combo_token;
         public string channel_id;
-        public JObject oaserver;
+        public string oaserver;
         public string account_type;
         public string accountType;
         public string oa_req_key;
@@ -22,7 +22,7 @@ namespace BH3_QRCodeScanner
             MainSave.CQLog.Info("扫码登录", $"当前配置中崩坏3版本: {ver}");
             if (string.IsNullOrWhiteSpace(ver))
             {
-                MainSave.CQLog.Error("无效版本", $"版本号无效，请按照文档填写版本号");
+                MainSave.CQLog.Info("无效版本", $"版本号无效，请按照文档填写版本号");
                 throw new System.Exception();
             }
             this.open_id = open_id;
@@ -38,19 +38,13 @@ namespace BH3_QRCodeScanner
             this.oaserver = GetOAServer();
             MainSave.CQLog.Info("OA服务器获取", "获取OA服务器成功");
         }
-        public JObject GetOAServer()
+        public string GetOAServer()
         {
             JObject data = new JObject();
             using(var http = Helper.GetCommonHttp(false))
             {
-                string url = $"https://global2.bh3.com/query_dispatch?version={oa_req_key}&t={Helper.TimeStampMs}";
-                data = JObject.Parse(http.UploadString(url, ""));
-            }
-            JObject dispatch = JObject.Parse((data["region_list"] as JArray)[0].ToString());
-            using (var http = Helper.GetCommonHttp(false))
-            {
-                string url = $"{dispatch["dispatch_url"]}?version={oa_req_key}&t={Helper.TimeStampMs}";
-                return JObject.Parse(http.UploadString(url, ""));
+                string url = $"https://dispatch.scanner.hellocraft.xyz/v1/query_dispatch/?version={oa_req_key}&t={Helper.TimeStampMs}";
+                return http.UploadString(url, "");
             }
         }
     }

@@ -114,6 +114,11 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             public bool QRCodeScan(string path)
             {
                 string url = QRScanner.ScanQRCode(path);
+                if(string.IsNullOrEmpty(url))
+                {
+                    MainSave.CQLog.Info("二维码扫描", $"扫码失败 URL为空");
+                    return false;
+                }
                 MainSave.CQLog.Info("二维码扫描", $"扫码成功，url={url}");
                 if (Scanner.ParseURL(url))
                 {
