@@ -4,6 +4,7 @@ using me.cqp.luohuaming.BH3Scanner.Sdk.Cqp.Interface;
 using BH3Scanner.PublicInfos;
 using System.Reflection;
 using System.IO;
+using BH3_QRCodeScanner;
 
 namespace me.cqp.luohuaming.BH3Scanner.Code
 {
@@ -44,6 +45,17 @@ namespace me.cqp.luohuaming.BH3Scanner.Code
                     catch { }
                 }
             }
+            LogHelper.InfoMethod = (type, message, status) =>
+            {
+                if (!status)
+                {
+                    MainSave.CQLog.Warning(type, message);
+                }
+                else
+                {
+                    MainSave.CQLog.Debug(type, message);
+                }
+            };
         }
     }
 }

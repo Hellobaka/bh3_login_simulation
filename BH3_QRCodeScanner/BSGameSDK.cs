@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace BH3_QRCodeScanner
 {
@@ -29,11 +30,15 @@ namespace BH3_QRCodeScanner
             JObject data = Login_NoCaptcha();//尝试无验证码登录
             if (data["code"].ToString() == "500002")
             {
-                return new JObject 
+                return new JObject
                 {
                     {"code", "500002" },
                     {"msg", "账号或密码错误" }
                 };
+            }
+            else if (data["code"].ToString() == "200000")
+            {
+                return Login_WithAutoCaptcha();
             }
             else if (data.ContainsKey("access_key") is false)
             {
@@ -59,6 +64,49 @@ namespace BH3_QRCodeScanner
                 return Console.ReadLine();
             }
         }
+
+        public JObject Login_WithAutoCaptcha()
+        {
+            LogHelper.Info("自动验证码流程", "开始");
+            var captcha = Captcha();
+            if (captcha == null || captcha.ContainsKey("gt") is false)
+            {
+                LogHelper.Info("自动验证码流程", "拉取验证码失败");
+                return null;
+            }
+            if (!HandleCapture(captcha["challenge"].ToString(), captcha["gt"].ToString(), captcha["gt_user_id"].ToString(), out string challenage, out string gt, out string validate, out string err))
+            {
+                LogHelper.Info("自动验证码流程", $"自动验证码失败: {err}");
+                return new JObject
+                {
+                    {"code", "200000" },
+                    {"msg", err }
+                };
+            }
+            LogHelper.Info("自动验证码流程", $"自动验证码成功，开始登录...");
+            JObject data = JObject.Parse(Resource_Json.modolrsa_B);
+
+            string query = Encrypt.Login_SetSign(data);
+            var http = Helper.GetCommonHttp();
+            string t = http.UploadString(bililogin + "api/client/rsa", query);
+            http.Dispose();
+            var rsa = JObject.Parse(t);
+            data = JObject.Parse(Resource_Json.modollogin_B);
+
+            string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
+            string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";
+            data["gt_user_id"] = gt;
+            data["validate"] = "";
+            data["challenge"] = challenage;
+            data["user_id"] = Account;
+            data["validate"] = validate;
+            data["seccode"] = validate + "|jordan";
+            data["pwd"] = Encrypt.RSAEncrypt(hash + Password, public_key);
+            query = Encrypt.Login_SetSign(data);
+            http = Helper.GetCommonHttp(true);
+            return JObject.Parse(http.UploadString(bililogin + "api/client/login", query));
+        }
+
         /// <summary>
         /// 进行带验证码的登录
         /// </summary>
@@ -118,7 +166,9 @@ namespace BH3_QRCodeScanner
 
             string public_key = rsa.ContainsKey("rsa_key") ? rsa["rsa_key"].ToString() : "";
             string hash = rsa.ContainsKey("hash") ? rsa["hash"].ToString() : "";
+            data["access_key"] = "";
             data["gt_user_id"] = "";
+            data["uid"] = "";
             data["validate"] = "";
             data["challenge"] = "";
             data["user_id"] = Account;
@@ -126,6 +176,88 @@ namespace BH3_QRCodeScanner
             query = Encrypt.Login_SetSign(data);
             using (var http = Helper.GetCommonHttp())
                 return JObject.Parse(http.UploadString(bililogin + "api/client/login", query));
+        }
+
+        public bool HandleCapture(string challenge, string gt, string uid,
+           out string challenge_Captcha, out string gt_Captcha, out string validate, out string msg)
+        {
+            validate = "";
+            msg = "";
+            challenge_Captcha = "";
+            gt_Captcha = "";
+
+            string queueAPI = $"https://pcrd.tencentbot.top/geetest_renew?captcha_type=1&challenge={challenge}&gt={gt}&userid={uid}&gs=1";
+            using (var http = Helper.GetCommonHttp(false))
+            {
+                // http.Headers.Add("User-Agent", "pcrjjc2/1.0.0");// sorry
+                string uuid = "";
+
+                var queue = JObject.Parse(http.DownloadString(queueAPI));
+                if (!queue.ContainsKey("uuid"))
+                {
+                    LogHelper.Info("自动验证码流程", "排队失败，UUID为空");
+                    msg = "UUID 为空";
+                    return false;
+                }
+                LogHelper.Info("自动验证码流程", $"排队成功");
+                uuid = queue["uuid"].ToString();
+                string resultAPI = $"https://pcrd.tencentbot.top/check/{uuid}";
+                for (int i = 0; i < 5; i++)
+                {
+                    var result = JObject.Parse(http.DownloadString(resultAPI));
+                    if (result.ContainsKey("queue_num"))
+                    {
+                        int queueNum = result["queue_num"].ToObject<int>();
+                        LogHelper.Info("自动验证码流程", $"Queue_Num={queueNum}");
+                        if (queueNum >= 1)
+                        {
+                            Thread.Sleep(3000);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if(!result.ContainsKey("info"))
+                        {
+                            Thread.Sleep(1000);
+                            continue;
+                        }
+                        try
+                        {
+                            if (result["info"] is JProperty)
+                            {
+                                msg = result["info"].ToString();
+                                if (msg == "in running")
+                                {
+                                    Thread.Sleep(6000);
+                                    continue;
+                                }
+                                return false;
+                            }
+                            var info = result["info"].ToObject<JObject>();
+                            if (info.ContainsKey("validate"))
+                            {
+                                validate = info["validate"].ToString();
+                                challenge_Captcha = info["challenge"].ToString();
+                                gt_Captcha = info["gt_user_id"].ToString();
+                                return true;
+                            }
+                            else
+                            {
+                                msg = "过验证码失败";
+                                return false;
+                            }
+                        }
+                        catch
+                        {
+                            LogHelper.Info("自动验证码流程", $"result={result}");
+                            Thread.Sleep(3000);
+                        }                        
+                    }
+                }
+                msg = "过验证码失败";
+                return false;
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using me.cqp.luohuaming.BH3Scanner.Tool.Http;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,8 +15,7 @@ namespace BH3_QRCodeScanner
 {
     public static class Encrypt
     {
-        //const string SALT = "fe8aac4e02f845b8ad67c427d48bfaf1";
-        const string SALT = "dbf8f1b4496f430b8a3c0f436a35b931";
+        const string SALT = "fe8aac4e02f845b8ad67c427d48bfaf1";
         public const string BH_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDvekdPMHN3AYhm/vktJT+YJr7cI5DcsNKqdsx5DZX0gDuWFuIjzdwButrIYPNmRJ1G8ybDIF7oDW2eEpm5sMbL9zs\n9ExXCdvqrn51qELbqj0XxtMTIpaCHFSI50PfPpTFV9Xt/hmyVwokoOXFlAEgCn+Q\nCgGs52bFoYMtyi+xEQIDAQAB\n";
         public const string BH_APP_KEY = "0ebc517adb1b62c6b408df153331f9aa";
         /// <summary>
@@ -36,7 +35,7 @@ namespace BH3_QRCodeScanner
                 ordered.Add(item);
                 if (item.Key == "pwd")
                 {
-                    query += $"{item.Key}={HttpTool.UrlEncode(item.Value.ToString())}&";
+                    query += $"{item.Key}={WebUtility.UrlEncode(item.Value.ToString())}&";
                     // continue;
                 }
                 query += $"{item.Key}={item.Value}&";

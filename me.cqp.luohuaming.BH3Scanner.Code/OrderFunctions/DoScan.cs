@@ -103,7 +103,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                 }
                 else
                 {
-                    MainSave.CQLog.Info("登录失败", $"code={r["code"]} msg={r["msg"]}");
+                    MainSave.CQLog.Info("登录失败", $"code={r["code"]} msg={(r.ContainsKey("msg") ? r["msg"] : r["message"])}");
                     return false;
                 }
             }
