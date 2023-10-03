@@ -64,7 +64,7 @@ namespace me.cqp.luohuaming.BH3Scanner.App.Export
 			// 反射获取 AppData 实例	
 			Type appDataType = typeof (AppData);	
 			// 注册一个 CQApi 实例	
-			AppInfo appInfo = new AppInfo ("me.cqp.luohuaming.BH3Scanner", 1, 9, "水银扫码机", "1.1.0", 1, "落花茗", "用于对B服的崩坏三进行快捷登录", authCode);	
+			AppInfo appInfo = new AppInfo ("me.cqp.luohuaming.BH3Scanner", 1, 9, "水银扫码机", "1.1.1", 1, "落花茗", "用于对B服的崩坏三进行快捷登录", authCode);	
 			appDataType.GetRuntimeProperty ("CQApi").GetSetMethod (true).Invoke (null, new object[] { new CQApi (appInfo) });	
 			AppData.UnityContainer.RegisterInstance<CQApi> ("me.cqp.luohuaming.BH3Scanner", AppData.CQApi);	
 			// 向容器注册一个 CQLog 实例	

@@ -43,7 +43,7 @@ namespace BH3_QRCodeScanner
             JObject data = new JObject();
             using(var http = Helper.GetCommonHttp(false))
             {
-                string url = $"https://dispatch.scanner.hellocraft.xyz/v1/query_dispatch/?version={oa_req_key}&t={Helper.TimeStampMs}";
+                string url = $"https://dispatch.scanner.hellocraft.xyz/v3/query_dispatch/?version={oa_req_key}&t={Helper.TimeStampMs}";
                 return http.UploadString(url, "");
             }
         }

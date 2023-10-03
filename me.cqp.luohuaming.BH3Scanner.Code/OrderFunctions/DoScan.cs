@@ -113,23 +113,31 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
             /// <param name="path">图片路径</param>
             public bool QRCodeScan(string path)
             {
-                string url = QRScanner.ScanQRCode(path);
-                if(string.IsNullOrEmpty(url))
+                try
                 {
-                    MainSave.CQLog.Info("二维码扫描", $"扫码失败 URL为空");
+                    string url = QRScanner.ScanQRCode(path);
+                    if (string.IsNullOrEmpty(url))
+                    {
+                        MainSave.CQLog.Info("二维码扫描", $"扫码失败 URL为空");
+                        return false;
+                    }
+                    MainSave.CQLog.Info("二维码扫描", $"扫码成功，url={url}");
+                    if (Scanner.ParseURL(url))
+                    {
+                        var b = Scanner.DoQRLogin();
+                        if (b != null && b["retcode"].ToString() == "0")
+                            return true;
+                        MainSave.CQLog.Info("二维码扫描", $"登录失败，msg={b["message"]}");
+                        return false;
+                    }
+                    else
+                        return false;
+                }
+                catch(Exception e)
+                {
+                    MainSave.CQLog.Info("二维码扫描", $"登录失败，msg={e.Message + e.StackTrace}");
                     return false;
                 }
-                MainSave.CQLog.Info("二维码扫描", $"扫码成功，url={url}");
-                if (Scanner.ParseURL(url))
-                {
-                    var b = Scanner.DoQRLogin();
-                    if (b != null && b["retcode"].ToString() == "0")
-                        return true;
-                    MainSave.CQLog.Info("二维码扫描", $"登录失败，msg={b["message"]}");
-                    return false;
-                }
-                else
-                    return false;
             }
         }
         /// <summary>
@@ -250,6 +258,7 @@ namespace me.cqp.luohuaming.BH3Scanner.Code.OrderFunctions
                 }
                 var s = new Scan(account.Key, account.Value);
                 MainSave.CQLog.Info("扫描二维码", $"QQ={qq} account={account.Key}, 账号获取成功，开始登录");
+                MainSave.CQApi.SendGroupMessage(Group, qq, "账号获取成功，开始登录....");
                 if (s.Login())
                 {
                     WaitLogin.Add(new User { QQID = qq, GroupID = Group }, s);
